@@ -58,14 +58,12 @@ class Grid:
     grid: dict[str, Point]  = {}
     @classmethod
     def build(cls, matrix: list[list[str]]):
-        grid = cls()
+        g = cls()
         for y, l in enumerate(matrix):
             for x, c in enumerate(l):
                 p = Point(x, y, c)
-                grid.add(p)
-        return grid
-    def add(self, p: Point):
-        self.grid[functions.serialize_position(p.x, p.y)] = p
+                g.grid[functions.serialize_position(p.x, p.y)] = p
+        return g
     def get_points(self) -> list[Point]:
         return list(self.grid.values())
     def get_point(self, x: int, y: int) -> Point | None:

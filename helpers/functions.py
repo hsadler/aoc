@@ -56,3 +56,8 @@ def test_sort_list():
         return x > y
     sorted_list = sort_list(original_list, compare=compare)
     assert sorted_list == [1, 2, 3, 4, 5]
+
+def rotate_matrix(matrix):
+    transposed_matrix = list(map(list, zip(*matrix)))
+    rotated_matrix = [row[::-1] for row in transposed_matrix]
+    return rotated_matrix

@@ -15,19 +15,30 @@ with open("input.txt", "r") as f:
         matrix.append(list(line.strip()))
 g = grid.Grid.build(matrix)
 
-for p in g.filter_points(g.get_points(), lambda p: p.val == "."):
+# print(g.get_print_string())
+
+# expand the space
+temp_matrix: list[list[str]] = []
+for y in range(g.get_height()):
+    row = g.get_row(y)
+    chars = [p.val for p in row]
+    temp_matrix.append(chars)
+    if "#" not in chars:
+        print("row", y)
+        temp_matrix.append(chars)
+temp_matrix = functions.rotate_matrix(temp_matrix)
+expanded_matrix: list[list[str]] = []
+for y, chars in enumerate(temp_matrix):
+    expanded_matrix.append(chars)
+    if "#" not in chars:
+        print("row", y)
+        expanded_matrix.append(chars)
+expanded_matrix = functions.rotate_matrix(expanded_matrix)
+g_expanded = grid.Grid.build(expanded_matrix)
+
+for p in g_expanded.filter_points(g_expanded.get_points(), lambda p: p.val == "."):
     p.color = grid.Color.DARK_RED
-for p in g.filter_points(g.get_points(), lambda p: p.val == "#"):
+for p in g_expanded.filter_points(g_expanded.get_points(), lambda p: p.val == "#"):
     p.color = grid.Color.YELLOW
 
-expanded_matrix: list[list[str]] = []
-for row in matrix:
-    expanded_row: list[str] = []
-    for col in row:
-        expanded_row.append(col)
-        expanded_row.append(col)
-    expanded_matrix.append(expanded_row)
-    expanded_matrix.append(expanded_row)
-
-g_expanded = grid.Grid.build(expanded_matrix)
 print(g_expanded.get_print_string())
