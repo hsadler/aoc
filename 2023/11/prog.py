@@ -10,7 +10,7 @@ from helpers import functions, grid
 
 # parse input
 INPUT_FILE = "input.txt"
-INPUT_FILE = "test_input.txt"
+# INPUT_FILE = "test_input.txt"
 matrix: list[list[str]] = []
 with open(INPUT_FILE, "r") as f:
     lines = f.read().split("\n")
@@ -96,7 +96,7 @@ print("--------------------")
 
 # part 2
 
-EXPANSION_FACTOR: int = 10
+EXPANSION_FACTOR: int = 1000000
 
 # create new grid
 g2 = grid.Grid.build(matrix)
@@ -105,6 +105,8 @@ for p in g2.get_points():
         p.color = grid.Color.DARK_RED
     elif p.val == "#":
         p.color = grid.Color.YELLOW
+
+# print(g2.get_print_string())
 
 # get star pairs
 stars = [p for p in g2.get_points() if p.val == "#"]
@@ -138,8 +140,20 @@ def get_expansions_count(
     x_expansion_positions,
     y_expansion_positions
 ) -> int:
-    # stub
-    return 0
+    x1, y1 = p1.x, p1.y
+    x2, y2 = p2.x, p2.y
+    min_x = min(x1, x2)
+    max_x = max(x1, x2)
+    min_y = min(y1, y2)
+    max_y = max(y1, y2)
+    expansions_count = 0
+    for x in x_expansion_positions:
+        if x > min_x and x < max_x:
+            expansions_count += 1
+    for y in y_expansion_positions:
+        if y > min_y and y < max_y:
+            expansions_count += 1
+    return expansions_count
 
 # calculate distances between star pairs
 star_pair_distances = {}
@@ -151,7 +165,7 @@ for star_pair in star_pairs:
         x_expansion_positions,
         y_expansion_positions
     )
-    distance = grid.Grid.manhattan_distance(p1, p2) + expansions_count * EXPANSION_FACTOR
+    distance = grid.Grid.manhattan_distance(p1, p2) + expansions_count * (EXPANSION_FACTOR - 1)
     star_pair_distances[star_pair] = distance
 
 total_distance = 0
@@ -160,5 +174,5 @@ for star_pair, distance in star_pair_distances.items():
 
 print(g2.get_print_string())
 print("part 2: ", total_distance)
-assert total_distance == 1030
+# assert total_distance == 8410
 print("--------------------")

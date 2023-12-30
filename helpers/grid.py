@@ -55,10 +55,11 @@ class Point:
         return (self.color.value[0], self.color.value[1], self.color.value[2], 10)
 
 class Grid:
-    grid: dict[str, Point]  = {}
+    grid: dict[str, Point]
     @classmethod
-    def build(cls, matrix: list[list[str]]):
+    def build(cls, matrix: list[list[str]]) -> 'Grid':
         g = cls()
+        g.grid = {}
         for y, l in enumerate(matrix):
             for x, c in enumerate(l):
                 p = Point(x, y, c)
