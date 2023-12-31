@@ -1,9 +1,11 @@
 import sys
-sys.path.append('..')
+
+sys.path.append("..")
 
 import json
 
 from helpers import functions
+
 functions.test_sort_list()
 
 # cards
@@ -21,10 +23,13 @@ functions.test_sort_list()
 # 2. calculate payout of each hand
 # 3. sum payouts
 
+
 # Python custom sorting example
 def custom_sort(element):
     # Define your custom sorting logic here
     return len(element)
+
+
 # Original list
 my_list = ["apple", "banana", "kiwi", "orange", "grape"]
 # Sort the list using the custom_sort function
@@ -76,24 +81,30 @@ card_to_score = {
     "2": 2,
 }
 
+
 class Hand:
     cards: str
     cards_permutations: list[list[str]]
     best_permutation: str
     bid: int
     classification: str | None
+
     def __init__(self, cards: str, bid: int):
         self.cards = cards
         self.bid = bid
         self.payout = 0
         self.classification = self.classify_hand(list(self.cards))
         self.calc_cards_permutations()
+
     def __repr__(self) -> str:
         return f"{self.cards} {self.bid} {self.payout} {self.classification} {self.best_permutation} {self.cards_permutations}"
+
     def __str__(self) -> str:
         return f"{self.cards} {self.bid} {self.payout} {self.classification} {self.best_permutation} {self.cards_permutations}"
+
     def to_json(self) -> str:
         return json.dumps(self.__dict__, indent=4)
+
     def classify_hand(self, cards: list[str]) -> str:
         card_counts = {}
         for c in cards:
@@ -116,6 +127,7 @@ class Hand:
             return ONE_PAIR
         else:
             return HIGH_CARD
+
     def calc_cards_permutations(self):
         self.cards_permutations = [self.cards]
         joker_indices = []
@@ -126,9 +138,14 @@ class Hand:
             new_permutations = []
             for permutation in self.cards_permutations:
                 for card in "AKQT98765432":
-                    new_permutation = permutation[:joker_index] + card + permutation[joker_index+1:]
+                    new_permutation = (
+                        permutation[:joker_index]
+                        + card
+                        + permutation[joker_index + 1 :]
+                    )
                     new_permutations.append(new_permutation)
             self.cards_permutations = new_permutations
+
     def get_best_permutation(self) -> str:
         classification_to_hands = {
             FIVE_OF_A_KIND: [],
@@ -145,11 +162,13 @@ class Hand:
         for classification in classification_order:
             if len(classification_to_hands[classification]) > 0:
                 return classification_to_hands[classification][0]
+
     def reclassify_hand_from_wildcards(self):
         self.best_permutation = self.get_best_permutation()
         self.classification = self.classify_hand(list(self.best_permutation))
+
     @staticmethod
-    def compare_hands(h1: 'Hand', h2: 'Hand') -> bool:
+    def compare_hands(h1: "Hand", h2: "Hand") -> bool:
         for i in range(0, len(h1.cards)):
             if card_to_score[h1.cards[i]] == card_to_score[h2.cards[i]]:
                 continue
@@ -157,11 +176,15 @@ class Hand:
                 return True
             return False
         return False
+
     @classmethod
-    def sort_hands(cls, hands: list['Hand']) -> list['Hand']:
+    def sort_hands(cls, hands: list["Hand"]) -> list["Hand"]:
         return functions.sort_list(hands, compare=cls.compare_hands)[::-1]
+
     @classmethod
-    def get_classification_to_hands(cls, hands: list['Hand']) -> dict[str, list['Hand']]:
+    def get_classification_to_hands(
+        cls, hands: list["Hand"]
+    ) -> dict[str, list["Hand"]]:
         classification_to_hands: dict[str, list[Hand]] = {}
         for classification in classification_order:
             classification_to_hands[classification] = []
@@ -171,7 +194,8 @@ class Hand:
             curr_hands = classification_to_hands[classification]
             classification_to_hands[classification] = cls.sort_hands(curr_hands)
         return classification_to_hands
-    
+
+
 def test_compare_hands():
     hand1 = Hand("AAAAA", 0)
     hand2 = Hand("KKKKK", 0)
@@ -184,7 +208,10 @@ def test_compare_hands():
     assert Hand.compare_hands(hand3, hand4) == False
     assert Hand.compare_hands(hand5, hand4) == False
     assert Hand.compare_hands(hand5, hand6) == False
+
+
 test_compare_hands()
+
 
 def test_sort_hands():
     hand1 = Hand("AQJTK", 0)
@@ -196,6 +223,8 @@ def test_sort_hands():
     hands = [hand5, hand1, hand3, hand6, hand2, hand4]
     sorted_hands = Hand.sort_hands(hands)
     assert sorted_hands == [hand1, hand2, hand3, hand4, hand5, hand6]
+
+
 test_sort_hands()
 
 hands: list[Hand] = []
@@ -216,7 +245,7 @@ for classification in classification_order:
 # calculate total payout
 total_payout = 0
 for i, hand in enumerate(ranked_hands[::-1]):
-    payout = hand.bid * (i+1)
+    payout = hand.bid * (i + 1)
     total_payout += payout
 
 print(total_payout)
@@ -238,7 +267,7 @@ for classification in classification_order:
 # calculate total payout
 total_payout = 0
 for i, hand in enumerate(ranked_hands[::-1]):
-    payout = hand.bid * (i+1)
+    payout = hand.bid * (i + 1)
     total_payout += payout
 [print(h) for h in ranked_hands]
 print(total_payout)

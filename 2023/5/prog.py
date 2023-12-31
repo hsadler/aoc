@@ -1,5 +1,6 @@
 import sys
-sys.path.append('..')
+
+sys.path.append("..")
 
 import json
 import random
@@ -19,8 +20,10 @@ class MapName(Enum):
     TEMPERATURE_TO_HUMIDITY = "temperature-to-humidity"
     HUMIDITY_TO_LOCATION = "humidity-to-location"
 
+
 def parse_int_string(s: str) -> list[int]:
     return [int(x) for x in s.split()]
+
 
 def parse_seeds(s: str) -> list[int]:
     seeds = []
@@ -28,6 +31,7 @@ def parse_seeds(s: str) -> list[int]:
     for id in ids:
         seeds.append(int(id))
     return seeds
+
 
 # parse
 seeds: list[int] = []
@@ -38,7 +42,7 @@ map_to_ids: dict[str, list[int]] = {
     MapName.WATER_TO_LIGHT.value: [],
     MapName.LIGHT_TO_TEMPERATURE.value: [],
     MapName.TEMPERATURE_TO_HUMIDITY.value: [],
-    MapName.HUMIDITY_TO_LOCATION.value: []
+    MapName.HUMIDITY_TO_LOCATION.value: [],
 }
 map_order: list[str] = [
     MapName.SEED_TO_SOIL.value,
@@ -47,13 +51,17 @@ map_order: list[str] = [
     MapName.WATER_TO_LIGHT.value,
     MapName.LIGHT_TO_TEMPERATURE.value,
     MapName.TEMPERATURE_TO_HUMIDITY.value,
-    MapName.HUMIDITY_TO_LOCATION.value
+    MapName.HUMIDITY_TO_LOCATION.value,
 ]
+
+
 def parse_map_ids(lines: list[str]) -> list[list[int]]:
     id_lists: list[list[str]] = []
     for line in lines:
         id_lists.append([int(n) for n in line.split()])
     return id_lists
+
+
 with open("input.txt", "r") as f:
     contents = f.read()
     parts = contents.split("\n\n")
@@ -69,6 +77,7 @@ with open("input.txt", "r") as f:
 # print(seeds)
 # print(json.dumps(map_to_ids, indent=4))
 
+
 # mapper
 def do_mapping(input: int, maps: list[list[int]]) -> tuple[int, list[int]]:
     curr_id = input
@@ -80,20 +89,23 @@ def do_mapping(input: int, maps: list[list[int]]) -> tuple[int, list[int]]:
             break
     return curr_id, last_map
 
+
 # test mapping logic
 def test_do_mapping():
     inputs = [79, 14, 55, 13]
     expected_outputs = [81, 14, 57, 13]
-    maps = [
-        [50, 98, 2], 
-        [52, 50, 48]
-    ]
+    maps = [[50, 98, 2], [52, 50, 48]]
     for i, input in enumerate(inputs):
         output, _ = do_mapping(input, maps)
         expected_output = expected_outputs[i]
         if output != expected_output:
-            raise Exception(f"test_do_mapping failed: {input} -> {output}, expected: {expected_output}")
+            raise Exception(
+                f"test_do_mapping failed: {input} -> {output}, expected: {expected_output}"
+            )
+
+
 test_do_mapping()
+
 
 # map all seeds to resulting values
 def proc_seeds(seeds: list[int]) -> dict[int, int]:
@@ -118,11 +130,14 @@ print("min final value: ", min(seed_to_final_value.values()))
 
 print("----")
 
+
 @dataclass
 class Min:
     val: int
     seed_range_num: int = 0
     last_map: list[int] = None
+
+
 def proc_seeds_2(seeds: list[int]) -> Min:
     m = Min(float("inf"))
     for seed in seeds:
@@ -136,15 +151,16 @@ def proc_seeds_2(seeds: list[int]) -> Min:
     print(m.val)
     return m
 
+
 print("seeds: ", seeds)
 min_final = Min(float("inf"))
 for i, seed in enumerate(seeds):
     if i % 2 != 0:
-        range_num = int(i/2)
+        range_num = int(i / 2)
         # range 6 was identified as the range with the lowest min final value
         if range_num != 6:
             continue
-        start = seeds[i-1]
+        start = seeds[i - 1]
         delta = seed
         seed_range = range(start, start + delta)
         sample_size = int(0.1 * len(seed_range))
@@ -167,5 +183,7 @@ for i, seed in enumerate(seeds):
             for seed_chunk in chunked_seed_range:
                 chunk_count += 1
                 proc_seeds_2(seed_chunk, range_num)
-                print(f"chunk {chunk_count}/{total_chunks} done. min: {m.val}. seed range num: {m.seed_range_num}. last map: {m.last_map}.")
+                print(
+                    f"chunk {chunk_count}/{total_chunks} done. min: {m.val}. seed range num: {m.seed_range_num}. last map: {m.last_map}."
+                )
 print("min final value: ", min_final.val)

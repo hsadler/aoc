@@ -1,10 +1,12 @@
 import sys
-sys.path.append('..')
+
+sys.path.append("..")
 
 import math
 from dataclasses import dataclass
 
 from helpers import functions
+
 functions.test_sort_list()
 
 # example node:
@@ -15,18 +17,23 @@ RIGHT = "R"
 START_NODE_ID = "AAA"
 END_NODE_ID = "ZZZ"
 
+
 class Node:
     id: str
     left: str
     right: str
+
     def __init__(self, id: str, left: str, right: str):
         self.id = id
         self.left = left
         self.right = right
+
     def __repr__(self):
         return f"Node(id={self.id}, left={self.left}, right={self.right})"
+
     def __str__(self):
         return self.__repr__()
+
 
 # parse input
 nodes: list[Node] = []
@@ -51,7 +58,7 @@ curr_node = id_to_node[START_NODE_ID]
 moves_count = 0
 while curr_node.id != END_NODE_ID:
     for d in directions:
-        # print(f"curr_node: {curr_node}")    
+        # print(f"curr_node: {curr_node}")
         moves_count += 1
         if d == LEFT:
             curr_node = id_to_node[curr_node.left]
@@ -61,7 +68,7 @@ while curr_node.id != END_NODE_ID:
             print(f"found end node {curr_node} in {moves_count} moves")
             break
 
-print('----------------------')
+print("----------------------")
 
 # part 2
 
@@ -77,28 +84,36 @@ for n in nodes:
     if n.id.endswith("Z"):
         end_nodes.append(n)
 
+
 @dataclass
-class HistoryStep():
+class HistoryStep:
     node: Node
     moves_count: int
     instruction_index: int
     next_history_step: "HistoryStep" = None
     prev_history_step: "HistoryStep" = None
+
     def to_dict(self):
         return {
             "node": self.node.id,
             "moves_count": self.moves_count,
             "instruction_index": self.instruction_index,
-            "next_history_step": self.next_history_step.node.id if self.next_history_step else None,
-            "prev_history_step": self.prev_history_step.node.id if self.prev_history_step else None,
+            "next_history_step": self.next_history_step.node.id
+            if self.next_history_step
+            else None,
+            "prev_history_step": self.prev_history_step.node.id
+            if self.prev_history_step
+            else None,
             "is_end": self.node.id.endswith("Z") if self.node else False,
         }
 
+
 @dataclass
-class Ghost():
+class Ghost:
     start_node: Node
     curr_node: Node
     history: list[HistoryStep]
+
 
 # build a run history for each ghost
 HISTORY_STEP_LIMIT = 100000
@@ -111,9 +126,7 @@ for start_node in start_nodes:
     while moves_count < HISTORY_STEP_LIMIT:
         for i, d in enumerate(directions):
             history_step = HistoryStep(
-                node=ghost.curr_node, 
-                moves_count=moves_count, 
-                instruction_index=i
+                node=ghost.curr_node, moves_count=moves_count, instruction_index=i
             )
             if len(ghost.history) > 0:
                 ghost.history[-1].next_history_step = history_step
@@ -128,6 +141,7 @@ for start_node in start_nodes:
                 break
     ghosts.append(ghost)
 
+
 # find cycle for ghost
 def find_cycle(ghost: Ghost) -> list[HistoryStep]:
     for i in range(2, len(ghost.history), 2):
@@ -138,29 +152,34 @@ def find_cycle(ghost: Ghost) -> list[HistoryStep]:
         # print(f"midpoint_index: {midpoint_index}")
         first_half = histories_to_check[:midpoint_index]
         second_half = histories_to_check[midpoint_index:]
-        if (
-            [h.node.id for h in first_half] == [h.node.id for h in second_half]
-            and first_half[0].instruction_index == second_half[0].instruction_index
-        ):
+        if [h.node.id for h in first_half] == [
+            h.node.id for h in second_half
+        ] and first_half[0].instruction_index == second_half[0].instruction_index:
             return first_half
     raise Exception("no cycle found")
 
+
 # gather information to predict where end-nodes will be
 @dataclass
-class GhostInfo():
+class GhostInfo:
     ghost_id: str
     cycle_offset: int
     cycle_length: int
+
     def get_next_cycle_move(self, move: int) -> int:
         return move + self.cycle_length
+
     def move_is_valid_end(self, move: int) -> bool:
         return move % self.cycle_length == self.cycle_offset
+
     def to_dict(self):
         return {
             "ghost": self.ghost_id,
             "cycle_offset": self.cycle_offset,
             "cycle_length": self.cycle_length,
         }
+
+
 ghost_id_to_ghost_info: dict[str, GhostInfo] = {}
 # ghost starting at NPA has cycle of length 19631 and offset 19631 and instruction_index 0
 # ghost starting at HMA has cycle of length 13771 and offset 27542 and instruction_index 0
@@ -184,9 +203,11 @@ if False:
             ghost_id_to_ghost_info[g.start_node.id] = GhostInfo(
                 ghost_id=g.start_node.id,
                 cycle_offset=end_step_from_cycle.moves_count,
-                cycle_length=len(cycle)
+                cycle_length=len(cycle),
             )
-            print(f"ghost starting at {g.start_node.id} has cycle of length {len(cycle)} and offset {end_step_from_cycle.moves_count} and instruction_index {end_step_from_cycle.instruction_index}")
+            print(
+                f"ghost starting at {g.start_node.id} has cycle of length {len(cycle)} and offset {end_step_from_cycle.moves_count} and instruction_index {end_step_from_cycle.instruction_index}"
+            )
         else:
             print(f"no cycle found for ghost starting at {g.curr_node}")
 

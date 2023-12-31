@@ -1,11 +1,7 @@
-
 valid_game_ids: list[int] = []
 
-bag = {
-    "red": 12,
-    "green": 13,
-    "blue": 14    
-}
+bag = {"red": 12, "green": 13, "blue": 14}
+
 
 def parse(line: str) -> tuple[int, list[str]]:
     game_info, raw_games = line.split(":")
@@ -16,12 +12,12 @@ def parse(line: str) -> tuple[int, list[str]]:
     games = [role.strip() for role in games]
     return game_id, games
 
+
 def eval_games(games: list[str]) -> bool:
     for game in games:
-        roles = [r.strip() for r in game.split(',')]
-        roles_data: dict[str, int] = { 
-            role.split()[1]: role.split()[0]
-            for role in roles 
+        roles = [r.strip() for r in game.split(",")]
+        roles_data: dict[str, int] = {
+            role.split()[1]: role.split()[0] for role in roles
         }
         # print(roles_data)
         for role_color, count in roles_data.items():
@@ -29,6 +25,7 @@ def eval_games(games: list[str]) -> bool:
                 # print(f"invalid: {role_color} {count}")
                 return False
     return True
+
 
 with open("input.txt", "r") as file:
     for line in file.readlines():

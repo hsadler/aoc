@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class Bag:
     red: int = 0
@@ -9,7 +10,9 @@ class Bag:
     def power(self) -> int:
         return self.red * self.blue * self.green
 
+
 bags: list[Bag] = []
+
 
 def parse_game(line: str) -> tuple[int, list[str]]:
     game_info, raw_games = line.split(":")
@@ -19,32 +22,28 @@ def parse_game(line: str) -> tuple[int, list[str]]:
     games = [role.strip() for role in games]
     return game_id, games
 
+
 def parse_role_datas(games: list[str]) -> dict[str, int]:
     roles_datas: list[dict[str, int]] = []
     for game in games:
-        roles = [r.strip() for r in game.split(',')]
-        roles_data: dict[str, int] = { 
-            role.split()[1]: role.split()[0]
-            for role in roles 
+        roles = [r.strip() for r in game.split(",")]
+        roles_data: dict[str, int] = {
+            role.split()[1]: role.split()[0] for role in roles
         }
         roles_datas.append(roles_data)
     return roles_datas
 
+
 def get_bag_from_games(games: list[str]) -> Bag:
     roles_datas = parse_role_datas(games)
     # print(roles_datas)
-    b: dict[str, int] = {
-        "red": 0,
-        "blue": 0,
-        "green": 0
-    }
+    b: dict[str, int] = {"red": 0, "blue": 0, "green": 0}
     for role_data in roles_datas:
         for role_color, count in role_data.items():
-            b[role_color] = int(count) \
-            if int(count) > b[role_color] \
-            else b[role_color]
+            b[role_color] = int(count) if int(count) > b[role_color] else b[role_color]
     # print(b)
     return Bag(b["red"], b["blue"], b["green"])
+
 
 with open("input.txt", "r") as file:
     for line in file.readlines():

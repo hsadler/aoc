@@ -15,9 +15,13 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 suface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
 pygame.display.set_caption("Pygame Circle with Alpha")
 
+
 def draw_screen():
-    pygame.draw.rect(surface=suface, color=red_with_alpha, rect=(0, 0, WIDTH/2, HEIGHT/2))
+    pygame.draw.rect(
+        surface=suface, color=red_with_alpha, rect=(0, 0, WIDTH / 2, HEIGHT / 2)
+    )
     # pygame.draw.circle(screen, red_with_alpha, (400, 300), 50)
+
 
 # Main game loop
 running = True

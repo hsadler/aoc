@@ -1,4 +1,3 @@
-
 # read each line
 # pick out the first integer and the last integer and use as a single integer
 # OR if a single integer exists, use that twice (ex. 7 -> 77)
@@ -6,7 +5,7 @@
 
 total = 0
 
-with open('input.txt', 'r') as f:
+with open("input.txt", "r") as f:
     lines = f.readlines()
     for l in lines:
         l = l.strip()
@@ -27,4 +26,3 @@ with open('input.txt', 'r') as f:
         total += line_int
 
 print(total)
-

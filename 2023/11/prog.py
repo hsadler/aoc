@@ -1,5 +1,6 @@
 import sys
-sys.path.append('../..')
+
+sys.path.append("../..")
 import random
 import copy
 import uuid
@@ -90,7 +91,7 @@ total_distance = 0
 for star_pair, distance in star_pair_distances.items():
     total_distance += distance
 
-print(g_expanded.get_print_string())
+print(g_expanded.to_print_string())
 print("part 1: ", total_distance)
 print("--------------------")
 
@@ -106,7 +107,7 @@ for p in g2.get_points():
     elif p.val == "#":
         p.color = grid.Color.YELLOW
 
-# print(g2.get_print_string())
+# print(g2.to_print_string())
 
 # get star pairs
 stars = [p for p in g2.get_points() if p.val == "#"]
@@ -134,11 +135,9 @@ for y in range(g2.get_height()):
 print("x_expansion_positions", x_expansion_positions)
 print("y_expansion_positions", y_expansion_positions)
 
+
 def get_expansions_count(
-    p1: grid.Point,
-    p2: grid.Point,
-    x_expansion_positions,
-    y_expansion_positions
+    p1: grid.Point, p2: grid.Point, x_expansion_positions, y_expansion_positions
 ) -> int:
     x1, y1 = p1.x, p1.y
     x2, y2 = p2.x, p2.y
@@ -155,24 +154,24 @@ def get_expansions_count(
             expansions_count += 1
     return expansions_count
 
+
 # calculate distances between star pairs
 star_pair_distances = {}
 for star_pair in star_pairs:
     p1, p2 = star_pair
     expansions_count = get_expansions_count(
-        p1,
-        p2,
-        x_expansion_positions,
-        y_expansion_positions
+        p1, p2, x_expansion_positions, y_expansion_positions
     )
-    distance = grid.Grid.manhattan_distance(p1, p2) + expansions_count * (EXPANSION_FACTOR - 1)
+    distance = grid.Grid.manhattan_distance(p1, p2) + expansions_count * (
+        EXPANSION_FACTOR - 1
+    )
     star_pair_distances[star_pair] = distance
 
 total_distance = 0
 for star_pair, distance in star_pair_distances.items():
     total_distance += distance
 
-print(g2.get_print_string())
+print(g2.to_print_string())
 print("part 2: ", total_distance)
 # assert total_distance == 8410
 print("--------------------")

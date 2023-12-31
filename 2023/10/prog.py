@@ -1,5 +1,6 @@
 import sys
-sys.path.append('../..')
+
+sys.path.append("../..")
 import random
 import copy
 import uuid
@@ -21,7 +22,7 @@ for p in g.filter_points(g.get_points(), lambda p: p.val == "."):
 for p in g.filter_points(g.get_points(), lambda p: p.val == "S"):
     p.color = grid.Color.YELLOW
 
-# print(g.get_print_string())
+# print(g.to_print_string())
 # exit()
 
 char_to_valid_directions: dict[str, list[grid.Direction]] = {
@@ -32,10 +33,13 @@ char_to_valid_directions: dict[str, list[grid.Direction]] = {
     "7": [grid.Direction.DIRECTION_LEFT, grid.Direction.DIRECTION_DOWN],
     "F": [grid.Direction.DIRECTION_RIGHT, grid.Direction.DIRECTION_DOWN],
     "S": [
-        grid.Direction.DIRECTION_UP, grid.Direction.DIRECTION_DOWN, 
-        grid.Direction.DIRECTION_LEFT, grid.Direction.DIRECTION_RIGHT
+        grid.Direction.DIRECTION_UP,
+        grid.Direction.DIRECTION_DOWN,
+        grid.Direction.DIRECTION_LEFT,
+        grid.Direction.DIRECTION_RIGHT,
     ],
 }
+
 
 @dataclass
 class Location:
@@ -43,6 +47,7 @@ class Location:
     point: grid.Point
     distance: int
     previous_location_id: uuid.UUID | None
+
 
 @dataclass
 class Path:
@@ -52,26 +57,21 @@ class Path:
     distance: int
     is_terminal: bool = False
 
+
 start_point = g.filter_points(g.get_points(), lambda p: p.val == "S")[0]
 start_location = Location(
-    id=uuid.uuid4(),
-    point=start_point,
-    distance=0,
-    previous_location_id=None
+    id=uuid.uuid4(), point=start_point, distance=0, previous_location_id=None
 )
-id_to_location: dict[uuid.UUID, Location] = {
-    start_location.id: start_location
-}
+id_to_location: dict[uuid.UUID, Location] = {start_location.id: start_location}
 start_path = Path(
     id=uuid.uuid4(),
     curr_location=start_location,
     location_id_history=[start_location.id],
-    distance=0
+    distance=0,
 )
-id_to_path: dict[uuid.UUID, Path] = {
-    start_path.id: start_path
-}
+id_to_path: dict[uuid.UUID, Path] = {start_path.id: start_path}
 is_traveling: bool = True
+
 
 def travel(g: grid.Grid, path: Path) -> bool:
     global char_to_valid_directions
@@ -107,11 +107,13 @@ def travel(g: grid.Grid, path: Path) -> bool:
     path.is_terminal = not valid_next_point_found
     return valid_next_point_found
 
+
 def color_trail(head_locations: list[Location]):
     for l in head_locations:
         if l.previous_location_id is not None:
             loc = id_to_location[l.previous_location_id]
             loc.point.color = grid.Color.BLACK
+
 
 def reset_grid(g: grid.Grid):
     for p in g.get_points():
@@ -122,28 +124,23 @@ def reset_grid(g: grid.Grid):
         else:
             p.color = grid.Color.GRAY
 
+
 def init_vars():
     global g, id_to_location, id_to_path, is_traveling
     start_point = g.filter_points(g.get_points(), lambda p: p.val == "S")[0]
     start_location = Location(
-        id=uuid.uuid4(),
-        point=start_point,
-        distance=0,
-        previous_location_id=None
+        id=uuid.uuid4(), point=start_point, distance=0, previous_location_id=None
     )
-    id_to_location = {
-        start_location.id: start_location
-    }
+    id_to_location = {start_location.id: start_location}
     start_path = Path(
         id=uuid.uuid4(),
         curr_location=start_location,
         location_id_history=[start_location.id],
-        distance=0
+        distance=0,
     )
-    id_to_path = {
-        start_path.id: start_path
-    }
+    id_to_path = {start_path.id: start_path}
     is_traveling = True
+
 
 HEADLES = False
 if HEADLES:
@@ -211,13 +208,13 @@ else:
             # print(f"point color: {p.get_color_as_tuple()}")
             # draw a circle
             pygame.draw.circle(
-                screen, 
-                p.get_color_as_tuple(), 
+                screen,
+                p.get_color_as_tuple(),
                 (
-                    p.x * POSITION_MULTIPLIER + POSITION_OFFSET, 
-                    p.y * POSITION_MULTIPLIER + POSITION_OFFSET
-                ), 
-                2.8
+                    p.x * POSITION_MULTIPLIER + POSITION_OFFSET,
+                    p.y * POSITION_MULTIPLIER + POSITION_OFFSET,
+                ),
+                2.8,
             )
             # draw a triangle
             # pygame.draw.polygon(
